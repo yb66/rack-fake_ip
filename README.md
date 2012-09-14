@@ -4,13 +4,11 @@ TODO: Write a gem description
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'rack-fake_ip'
+Go to the repository to either download it or use Bundler (or some such).
 
 And then execute:
 
-    $ bundle
+    $ bundle install --binstubs --path vendor
 
 Or install it yourself as:
 
@@ -18,7 +16,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    module Example
+      def self.app
+        app = Rack::Builder.app do
+          x = lambda {|e|
+            request = Rack::Request.new(e)
+            # Do something with IP
+            Rack::Response.new(e["REMOTE_ADDR"],200,{"Content-Type" => "text/html"}).finish
+          }
+
+          use Rack::FakeIP
+          run x
+        end
+      end # def app
+    end
+
 
 ## Contributing
 
