@@ -16,16 +16,22 @@ Or install it yourself as:
 
 ## Usage
 
+Put the FakeIP middleware _before_ anything that might require the fake IP.
+
     module Example
       def self.app
         app = Rack::Builder.app do
+        
+          use Rack::FakeIP
+          
+          use Rack::GeoIPCity, :db => "/path/to/db" # for example
+
           x = lambda {|e|
             request = Rack::Request.new(e)
-            # Do something with IP
+            # Do something with IP or env
             Rack::Response.new(e["REMOTE_ADDR"],200,{"Content-Type" => "text/html"}).finish
           }
 
-          use Rack::FakeIP
           run x
         end
       end # def app
@@ -34,8 +40,9 @@ Or install it yourself as:
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+* Fork it
+* Checkout the development branch (`git checkout develop`)
+* Create your feature branch (`git checkout -b my-new-feature`)
+* Commit your changes (`git commit -am 'Added some feature'`)
+* Push to the branch (`git push origin my-new-feature`)
+* Create new Pull Request
