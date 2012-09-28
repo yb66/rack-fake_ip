@@ -4,16 +4,31 @@ require 'ipaddr'
 module Rack
   class FakeIP
 
+    DEFAULT_OPTIONS = {
+      :static => true
+    }
+
+    # @param [#call] app
+    # @param [Hash] options
+    # @option options [true,false] :static Keep the same address during a session.
     def initialize( app, options={} )
-      @app, @options = app, options
-      
+      @app, @options = app, DEFAULT_OPTIONS.merge(options)
     end
 
 
-    def call(response)
-      response["REMOTE_ADDR"] = IPAddr.new(rand(2**32),Socket::AF_INET).to_s
-      #warn response.inspect
-      @app.call(response)
+    def call(env)
+      env["REMOTE_ADDR"] = if @options[:static]
+        Rack::Request.new(env).session["fake_ip"] ||= generate_ip4
+      else
+        generate_ip4
+      end
+      @app.call(env)
+    end
+
+    # Generates a random (using `rand`) IPv4 address.
+    # @return [String]
+    def generate_ip4
+      IPAddr.new(rand(2**32),Socket::AF_INET).to_s
     end
   end
 end
