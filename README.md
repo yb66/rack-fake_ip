@@ -1,6 +1,8 @@
 # Rack::FakeIp
 
-TODO: Write a gem description
+## Why? ##
+
+Sometimes it's helpful while developing to pretend that you're not connecting from 127.0.0.1, in a couple of lines of reusable code that don't revolve around a google search like "ruby generate random ip" ;-)
 
 ## Installation
 
