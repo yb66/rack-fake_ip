@@ -1,12 +1,11 @@
 
 
 module Example
-  def self.app
+  def self.app( options={} )
     app = Rack::Builder.app do
-      use Rack::FakeIP
+      use Rack::FakeIP, options
+      use Rack::Session::Cookie
       x = lambda {|e|
-        request = Rack::Request.new(e)
-        warn %Q!  IP: #{e["REMOTE_ADDR"]}!
         Rack::Response.new(e["REMOTE_ADDR"],200,{"Content-Type" => "text/html"}).finish
       }
       run x
@@ -15,7 +14,7 @@ module Example
 end
 
 
-shared_context "Application" do
+shared_context "Application" do |options={}|
   include Rack::Test::Methods
-  let(:app){ Example.app }
+  let(:app){ Example.app( options ) }
 end
