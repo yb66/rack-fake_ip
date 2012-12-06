@@ -34,4 +34,19 @@ describe "Rack::FakeIP" do
       last_response.body.should == first_response 
     end
   end
+
+  context ":ip option given a valid IP" do
+    include_context "Application", :ip => "208.80.152.201" 
+    # using wikipedia's IP
+    it "IP between requests should be the same" do
+      get "/"
+      first_response = last_response.body
+      get "/a-different-route",{}, {"rack.session" => {"fake_ip" => first_response }}
+      last_response.body.should == first_response
+    end
+    it "should have the ip address " do
+      get "/"
+      last_response.body.should == "208.80.152.201"
+    end
+  end
 end
